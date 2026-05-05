@@ -50,6 +50,21 @@ function App() {
     }
   }, []);
 
+  // Automatic Device Battery Detection
+  useEffect(() => {
+    if ('getBattery' in navigator) {
+      (navigator as any).getBattery().then((battery: any) => {
+        const level = Math.round(battery.level * 100);
+        setCurrentBattery(level);
+        
+        // Update whenever the physical battery level changes
+        battery.addEventListener('levelchange', () => {
+          setCurrentBattery(Math.round(battery.level * 100));
+        });
+      });
+    }
+  }, []);
+
   const handleLogin = (userData: any) => {
     localStorage.setItem('ev_hub_user', JSON.stringify(userData));
     setUser(userData);
@@ -185,12 +200,22 @@ function App() {
     }
   }, [currentBattery, isTripStarted]);
 
+  // Calculate live metrics for Drive Mode
+  const remainingDistance = routeData?.navSteps 
+    ? routeData.navSteps.slice(activeStepIndex).reduce((sum, step) => sum + step.distance, 0) / 1000 
+    : 0;
+  
+  const batteryAtDest = predictedRange 
+    ? currentBattery - (remainingDistance / predictedRange) * currentBattery
+    : currentBattery;
+
   if (!user) {
     return <Login onLogin={handleLogin} />;
   }
 
   return (
     <div className="app-container">
+      {/* ... (Emergency Button) ... */}
       <div style={{ position: 'absolute', top: 24, right: 24, zIndex: 1000 }}>
         <button className="btn btn-danger" style={{ padding: '16px 24px', borderRadius: '50px' }} onClick={() => setShowEmergency(true)}>
           <AlertCircle size={24} /> EMERGENCY
@@ -225,6 +250,8 @@ function App() {
         alerts={alerts}
         navSteps={routeData?.navSteps || []}
         activeStepIndex={activeStepIndex}
+        remainingDistance={remainingDistance}
+        batteryAtDest={batteryAtDest}
       />
 
       {showEmergency && (

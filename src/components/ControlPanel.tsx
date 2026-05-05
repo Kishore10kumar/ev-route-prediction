@@ -39,6 +39,8 @@ interface ControlPanelProps {
   alerts: AlertMessage[];
   navSteps?: NavStep[];
   activeStepIndex?: number;
+  remainingDistance?: number;
+  batteryAtDest?: number;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ 
@@ -56,10 +58,19 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onCancelTrip,
   alerts,
   navSteps = [],
-  activeStepIndex = 0
+  activeStepIndex = 0,
+  remainingDistance,
+  batteryAtDest
 }) => {
   const [dest, setDest] = useState('');
   const [battery, setBattery] = useState(80);
+
+  // Sync slider with real device battery on load
+  useEffect(() => {
+    if (liveBattery !== undefined && !isTripStarted) {
+      setBattery(liveBattery);
+    }
+  }, [liveBattery, isTripStarted]);
 
   const displayBattery = liveBattery !== undefined ? Math.round(liveBattery) : battery;
 
@@ -219,13 +230,35 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
           )}
 
-          <div className="live-metrics" style={{ marginTop: '12px' }}>
-            <div className="metric-card glass-panel main-metric">
-              <Battery size={24} color={displayBattery > 20 ? 'var(--accent-color)' : 'var(--danger-color)'} />
+          <div className="live-metrics-grid" style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="metric-card glass-panel">
+              <Battery size={20} color={displayBattery > 20 ? 'var(--accent-color)' : 'var(--danger-color)'} />
               <div className="metric-data">
-                <span className="metric-title">Live Battery Level</span>
+                <span className="metric-title">Current Battery</span>
                 <span className={`metric-value ${displayBattery <= 20 ? 'danger-text' : ''}`}>
                   {displayBattery}%
+                </span>
+              </div>
+            </div>
+            
+            <div className="metric-card glass-panel">
+              <Navigation size={20} color="var(--primary-color)" />
+              <div className="metric-data">
+                <span className="metric-title">Distance Left</span>
+                <span className="metric-value">
+                  {remainingDistance !== undefined ? `${remainingDistance.toFixed(1)} km` : '--'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="live-metrics" style={{ marginTop: '10px' }}>
+            <div className="metric-card glass-panel main-metric" style={{ background: 'rgba(14, 165, 233, 0.05)' }}>
+              <Zap size={24} color="var(--primary-color)" />
+              <div className="metric-data">
+                <span className="metric-title">Est. Battery at Arrival</span>
+                <span className="metric-value">
+                  {batteryAtDest !== undefined ? `${Math.max(0, Math.round(batteryAtDest))}%` : '--'}
                 </span>
               </div>
             </div>
