@@ -1,0 +1,122 @@
+.emergency-sos-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+  max-width: 90vw;
+  z-index: 2000;
+  padding: 0;
+  border-color: var(--danger-color);
+  box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3);
+  overflow: hidden;
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.sos-header {
+  background: rgba(239, 68, 68, 0.15);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.sos-title h3 {
+  color: var(--danger-color);
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.sos-title p {
+  color: var(--text-color);
+  font-size: 0.875rem;
+}
+
+.sos-content {
+  padding: 24px;
+}
+
+.scanning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  padding: 20px 0;
+}
+
+.spin-icon {
+  animation: spin 2s linear infinite;
+  color: var(--primary-color);
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.station-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.station-details {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+
+.station-details h4 {
+  font-size: 1.125rem;
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+.station-details p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.sos-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.125rem;
+}
+
+.sos-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.success-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.sos-success p {
+  color: var(--text-color);
+  font-size: 0.875rem;
+}
