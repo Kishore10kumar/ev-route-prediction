@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapDisplay from './components/MapDisplay';
 import ControlPanel from './components/ControlPanel';
 import Login from './components/Login';
+import EmergencySOS from './components/EmergencySOS';
 import { fetchRouteFromCoords, fetchWeather, fetchChargingHubsAlongRoute, calculateDistance, RouteData, WeatherData } from './services/api';
 import { AlertCircle } from 'lucide-react';
 
@@ -227,11 +228,12 @@ function App() {
       />
 
       {showEmergency && (
-        <div className="emergency-modal glass-panel" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 2000, padding: '40px', textAlign: 'center' }}>
-          <h2>Emergency Protocols Initiated</h2>
-          <p>Sending SOS with location to nearest emergency services...</p>
-          <button className="btn btn-primary" onClick={() => setShowEmergency(false)}>Dismiss</button>
-        </div>
+        <EmergencySOS
+          currentLat={liveLocation?.[0] || 12.9716}
+          currentLng={liveLocation?.[1] || 77.5946}
+          user={user}
+          onClose={() => setShowEmergency(false)}
+        />
       )}
     </div>
   );
