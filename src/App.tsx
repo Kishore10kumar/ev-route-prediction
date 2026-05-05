@@ -22,7 +22,7 @@ function App() {
   const [hubs, setHubs] = useState<any[]>([]);
   
   const [predictedRange, setPredictedRange] = useState<number | null>(null);
-  const [currentBattery, setCurrentBattery] = useState(100);
+  const [currentBattery, setCurrentBattery] = useState(80); // Default to 80 to match ControlPanel
   
   const [liveLocation, setLiveLocation] = useState<[number, number] | null>(null);
   const [lastLocation, setLastLocation] = useState<[number, number] | null>(null);
@@ -55,13 +55,20 @@ function App() {
     if ('getBattery' in navigator) {
       (navigator as any).getBattery().then((battery: any) => {
         const level = Math.round(battery.level * 100);
+        console.log(`[BATTERY DETECTED] Level: ${level}%`);
         setCurrentBattery(level);
         
         // Update whenever the physical battery level changes
         battery.addEventListener('levelchange', () => {
-          setCurrentBattery(Math.round(battery.level * 100));
+          const newLevel = Math.round(battery.level * 100);
+          console.log(`[BATTERY UPDATED] New Level: ${newLevel}%`);
+          setCurrentBattery(newLevel);
         });
+      }).catch((err: any) => {
+        console.warn("[BATTERY API ERROR]", err);
       });
+    } else {
+      console.warn("[BATTERY API NOT SUPPORTED] Using default 80%");
     }
   }, []);
 
@@ -205,7 +212,7 @@ function App() {
     ? routeData.navSteps.slice(activeStepIndex).reduce((sum, step) => sum + step.distance, 0) / 1000 
     : 0;
   
-  const batteryAtDest = predictedRange 
+  const batteryAtDest = (predictedRange && predictedRange > 0)
     ? currentBattery - (remainingDistance / predictedRange) * currentBattery
     : currentBattery;
 

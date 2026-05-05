@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MapPin, Battery, Thermometer, Navigation, Zap, 
   AlertTriangle, Coffee, Info, Play, ChevronRight, X,
@@ -65,12 +65,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const [dest, setDest] = useState('');
   const [battery, setBattery] = useState(80);
 
-  // Sync slider with real device battery on load
+  // Aggressive sync with real device battery
   useEffect(() => {
-    if (liveBattery !== undefined && !isTripStarted) {
-      setBattery(liveBattery);
+    if (liveBattery !== undefined) {
+      setBattery(Math.round(liveBattery));
     }
-  }, [liveBattery, isTripStarted]);
+  }, [liveBattery]);
 
   const displayBattery = liveBattery !== undefined ? Math.round(liveBattery) : battery;
 
@@ -128,7 +128,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
 
             <div className="input-group">
-              <label className="input-label">Current Battery: {displayBattery}%</label>
+              <label className="input-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Current Battery: {displayBattery}%</span>
+                {liveBattery !== undefined && (
+                  <span style={{ fontSize: '10px', color: 'var(--accent-color)', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 700 }}>
+                    ● Hardware Synced
+                  </span>
+                )}
+              </label>
               <div className="slider-container">
                 <Battery size={18} className="input-icon battery-icon" style={{ color: displayBattery > 20 ? 'var(--accent-color)' : 'var(--danger-color)'}} />
                 <input 
